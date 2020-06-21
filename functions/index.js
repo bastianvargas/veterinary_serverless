@@ -14,18 +14,17 @@ const Pets = require('./Pets')
 
 
 const createServer = () => {
-    app.get('/pets', (req, res) => {
-        const pet = new Pets({
-            nombre: 'cabezon!',
-            tipo: 'gato',
-            descripcion: 'muy mañoso',
-        })
-        pet.save()
-        res.send('datos se guardaron los datos prueba!')
+    app.get('/pets', async (req, res) => {
+        const result = await Pets.find({}).exec()
+        res.send(result)
     })
 
-    app.post('/pets', (req, res) => {
-        res.send('creando mascota')
+    app.post('/pets', async (req, res) => {
+        const { body } = req //nombre, tipo y descripcion
+
+        const pet = new Pets(body)
+        await pet.save()
+        res.sendStatus(204)
     })
 
     app.get('/pets/:id/daralta', (req, res) => {
