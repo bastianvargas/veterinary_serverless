@@ -3,6 +3,7 @@ require('dotenv').config();
 const functions = require('firebase-functions');
 const express = require('express')
 const mongoose = require('mongoose')
+const cors = require('cors')
 
 
 
@@ -14,6 +15,8 @@ const Pets = require('./Pets')
 
 
 const createServer = () => {
+    app.use(cors({ origin:true}))
+    
     app.get('/pets', async (req, res) => {
         const result = await Pets.find({}).exec()
         res.send(result)
@@ -27,8 +30,10 @@ const createServer = () => {
         res.sendStatus(204)
     })
 
-    app.get('/pets/:id/daralta', (req, res) => {
-        res.send('dar el alta')
+    app.get('/pets/:id/daralta', async (req, res) => {
+        const { id } = req.params
+        await Pets.deleteOne({ _id: id }).exec()
+        res.sendStatus(204)
     })
 
     return app
